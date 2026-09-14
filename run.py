@@ -90,16 +90,32 @@ def set_cronjob():
     print(f"{colors['LGRE']}Current time {colors['WHTE']}:\t{colors['RES']} {colors['BYEL']}{datetime.now().strftime('%I')}{colors['BDGRY']}:{colors['BYEL']}{datetime.now().strftime('%M')} {colors['LBLU']}{datetime.now().strftime('%p')} {colors['MAG']}{datetime.now().strftime('%a')}{colors['RES']}")
     print(f"{colors['ORA']}Next run     {colors['WHTE']}:\t{colors['RES']} {colors['BYEL']}{next_run.strftime('%I')}{colors['BDGRY']}:{colors['BYEL']}{next_run.strftime('%M')} {colors['LBLU']}{next_run.strftime('%p')} {colors['MAG']}{next_run.strftime('%a')}{colors['RES']}\n")
 
+def check_app():
+    result = subprocess.run(
+        ["osascript", "-e", 
+        f'tell application "System Events" to (name of processes) contains "{APP_NAME.replace(" ", "")}"'],
+        capture_output=True,
+        text=True
+    )
 
-if __name__ == "__main__":
-    launch_app()
-    collect_gems()
-    set_cronjob()
+    return True if result.stdout.strip() == "true" else False
 
-    # Close app
+def close_app():
     subprocess.run([
         "osascript",
         "-e",
         f'tell application "{APP_NAME}" to quit'
     ])
+
+
+if __name__ == "__main__":
+    if check_app() is True:
+        print(f"{colors['BYEL']}{APP_NAME} is already running. Closing...{colors['RES']}")
+        close_app()
+        time.sleep(3)
+
+    launch_app()
+    collect_gems()
+    set_cronjob()
+    close_app()
     

@@ -90,6 +90,34 @@ def set_cronjob():
     print(f"{colors['LGRE']}Current time {colors['WHTE']}:\t{colors['RES']} {colors['BYEL']}{datetime.now().strftime('%I')}{colors['BDGRY']}:{colors['BYEL']}{datetime.now().strftime('%M')} {colors['LBLU']}{datetime.now().strftime('%p')} {colors['MAG']}{datetime.now().strftime('%a')}{colors['RES']}")
     print(f"{colors['ORA']}Next run     {colors['WHTE']}:\t{colors['RES']} {colors['BYEL']}{next_run.strftime('%I')}{colors['BDGRY']}:{colors['BYEL']}{next_run.strftime('%M')} {colors['LBLU']}{next_run.strftime('%p')} {colors['MAG']}{next_run.strftime('%a')}{colors['RES']}\n")
 
+def confirm_start():
+    result = subprocess.run(
+        [
+            "osascript",
+            "-e",
+            f'''
+            try
+                set d to display dialog "Starting {APP_NAME} automation." & return & return & "Press Esc or click Cancel to stop." buttons {{"Cancel", "Continue"}} default button "Continue" cancel button "Cancel" giving up after 5 with title "{APP_NAME}"
+
+                if gave up of d then
+                    return "TIMEOUT"
+                else
+                    return button returned of d
+                end if
+
+            on error number -128
+                return "CANCEL"
+            end try
+            '''
+        ],
+        capture_output=True,
+        text=True
+    )
+
+    action = result.stdout.strip()
+
+    return True if action == "Continue" or action == "TIMEOUT" else False
+
 def check_app():
     result = subprocess.run(
         ["osascript", "-e", 
@@ -109,7 +137,11 @@ def close_app():
 
 
 if __name__ == "__main__":
-    if check_app() is True:
+    if not confirm_start():
+        print(f"{colors['LRED']}Script cancelled.{colors['RES']}")
+        exit()
+
+    if check_app():
         print(f"{colors['BYEL']}{APP_NAME} is already running. Closing...{colors['RES']}")
         close_app()
         time.sleep(3)
@@ -118,4 +150,3 @@ if __name__ == "__main__":
     collect_gems()
     set_cronjob()
     close_app()
-    

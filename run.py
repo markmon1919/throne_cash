@@ -31,8 +31,8 @@ LEFT_X, RIGHT_X, TOP_Y, BTM_Y = 0, SCREEN_POS.get("right_x"), 0, SCREEN_POS.get(
 def launch_app():
     # Open app
     subprocess.run(["open", APP_PATH])
-    # Fullscreen
     time.sleep(10)
+    # Fullscreen
     subprocess.run([
         "osascript",
         "-e",

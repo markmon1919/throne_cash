@@ -59,7 +59,6 @@ def set_cronjob():
         f"cd {Path(__file__).resolve().parent} && ./{Path(__file__).resolve().name} >> {CRON_LOG} 2>&1"
         f"\t# {APP_NAME} Job"
     )
-
     # Get existing cron jobs
     result = subprocess.run(
         ["sudo", "crontab", "-u", CRON_USER, "-l"],

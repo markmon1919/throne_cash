@@ -90,6 +90,8 @@ def set_cronjob():
     print(f"{colors['ORA']}Next run     {colors['WHTE']}:\t{colors['RES']} {colors['BYEL']}{next_run.strftime('%I')}{colors['BDGRY']}:{colors['BYEL']}{next_run.strftime('%M')} {colors['LBLU']}{next_run.strftime('%p')} {colors['MAG']}{next_run.strftime('%a')}{colors['RES']}\n")
 
 def confirm_start():
+    subprocess.run(["afplay", "/System/Library/Sounds/Glass.aiff"])
+    
     result = subprocess.run(
         [
             "osascript",
